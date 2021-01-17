@@ -1,8 +1,6 @@
 module GuessingGameLib
   (
     genSecret,
-    getGuess,
-    turnStep,
     takeTurn
   ) where
 
