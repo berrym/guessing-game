@@ -1,35 +1,38 @@
 module GuessingGameLib
   (
     genSecret,
-    takeTurn
+    gameLoop
   ) where
 
 -- Random number guessing game lib
 
 import System.Random
+import Text.Read
 
 -- Generate the random "secret" number
 genSecret :: Int -> IO Int
 genSecret max_secret = do
-  secret <- randomRIO (0, max_secret)
+  secret <- randomRIO (1, max_secret)
   return secret
 
 -- Get a guess from the player
 getGuess :: IO Int
 getGuess = do
   guess <- getLine
-  return $ read guess
+  case readMaybe guess of
+    Just x -> return x
+    Nothing -> putStrLn("Invalid input! Try again.") >> getGuess
 
 -- Second step in processing a players' guess
-turnStep :: Int -> Int -> Int -> IO ()
-turnStep secret guess limit
-  | guess > secret = takeTurn secret limit ("Too high!\nGuess a number between 1 and " ++ show limit) 
-  | guess < secret = takeTurn secret limit ("Too low!\nGuess a number between 1 and " ++ show limit)
-  | otherwise = putStrLn ("Correct! The secret number is " ++ show secret ++ ".")
+checkResult :: Int -> Int -> Int -> IO ()
+checkResult secret guess limit
+  | guess > secret = gameLoop secret limit ("Too high!\nGuess a number between 1 and " ++ show limit) 
+  | guess < secret = gameLoop secret limit ("Too low!\nGuess a number between 1 and " ++ show limit)
+  | otherwise = putStrLn("Correct! The secret number is " ++ show secret ++ ".")
 
--- Begin a players' turn
-takeTurn :: Int -> Int -> String -> IO ()
-takeTurn secret limit prompt = do
+-- Main game loop
+gameLoop :: Int -> Int -> String -> IO ()
+gameLoop secret limit prompt = do
   putStrLn prompt
   guess <- getGuess
-  turnStep secret guess limit
+  checkResult secret guess limit
