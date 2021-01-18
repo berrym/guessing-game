@@ -21,15 +21,15 @@ getGuess = do
   return $ read guess
 
 -- Second step in processing a players' guess
-turnStep :: Int -> Int -> (Int, Int) -> IO ()
-turnStep secret guess (low, high)
-  | guess > secret = takeTurn secret (low, guess - 1) "Too high!"
-  | guess < secret = takeTurn secret (guess + 1, high) "Too low!"
+turnStep :: Int -> Int -> Int -> IO ()
+turnStep secret guess limit
+  | guess > secret = takeTurn secret limit ("Too high!\nGuess a number between 1 and " ++ show limit) 
+  | guess < secret = takeTurn secret limit ("Too low!\nGuess a number between 1 and " ++ show limit)
   | otherwise = putStrLn ("Correct! The secret number is " ++ show secret ++ ".")
 
 -- Begin a players' turn
-takeTurn :: Int -> (Int, Int) -> String -> IO ()
-takeTurn secret limits prompt = do
+takeTurn :: Int -> Int -> String -> IO ()
+takeTurn secret limit prompt = do
   putStrLn prompt
   guess <- getGuess
-  turnStep secret guess limits
+  turnStep secret guess limit

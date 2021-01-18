@@ -7,5 +7,5 @@ import GuessingGameLib
 main :: IO ()
 main = do
   secret <- genSecret limit
-  takeTurn secret (1, limit) ("Guess a number between 1 and " ++ show limit)
+  takeTurn secret limit ("Guess a number between 1 and " ++ show limit)
   where limit = 100
